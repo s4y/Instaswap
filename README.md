@@ -1,0 +1,1 @@
+I think that [Instapaper](http://instapaper.com/) is awesome. [omni5cience](https://github.com/omni5cience) uses it too. When I want him to read something online, why not add it to his Instapaper queue. Email is just too Web 1.0.
