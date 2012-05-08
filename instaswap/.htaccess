@@ -1,0 +1,15 @@
+AddDefaultCharset UTF-8
+
+<Files "api">
+	ForceType x-mapp-php5
+</Files>
+
+<Files "php.ini">
+	Deny from all
+</Files>
+
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.php [L]

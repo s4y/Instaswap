@@ -1,0 +1,30 @@
+html{
+	font: 16px "Helvetica Neue", "Helvetica", sans-serif;
+}
+body{
+	margin: 1em;
+}
+h1{
+	margin: 1rem 0;
+}
+input{
+	font-size: inherit;
+}
+#login{
+	/*margin: 0.5em 0;*/
+}
+#login>dt{
+	margin: 0.5em 0;
+}
+#login>dt::after{
+	content: ':';
+}
+#login>dd{
+	margin: 0;
+}
+.error>span{
+	color: #4B0000;
+	border: 1px solid #4B0000;
+	padding: 0.5em;
+	display: inline-block;
+}
