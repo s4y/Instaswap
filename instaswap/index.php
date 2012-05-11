@@ -1,6 +1,7 @@
 <?php
 require_once("InstapaperOAuth/InstapaperOAuth.php");
 require_once('config.php');
+require_once('db.php');
 
 function destroy_session(){
 	if (isset($_COOKIE[session_name()])) {
@@ -20,24 +21,38 @@ if (isset($_COOKIE[session_name()])) {
 	session_start();
 }
 
+$db = new InstaswapDB();
+
 switch (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) {
 	case '/':
 		if (!$_SESSION['user']) {
-			header("Location: /login", true, 302);
+			header("Location: /login", true, 303);
 		} else {
 			require('pages/home.php');
 		}
 		break;
+	case '/settings':
+		if (!$_SESSION['user']) {
+			header("Location: /login", true, 303);
+		} else {
+			require('pages/settings.php');
+		}
+		break;
 	case '/login':
 		if ($_SESSION['user']) {
-			header("Location: /", true, 302);
+			header("Location: /", true, 303);
 		} else {
 			require('pages/login.php');
 		}
 		break;
 	case '/logout':
-		destroy_session();
-		header("Location: /login", true, 302);
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			destroy_session();
+			header("Location: /login", true, 303);
+		} else {
+			header("HTTP/1.0 405 Method Not Allowed");
+			require('404.php');
+		}
 		break;
 	default:
 		header("HTTP/1.0 404 Not Found");

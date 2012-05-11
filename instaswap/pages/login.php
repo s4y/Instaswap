@@ -8,29 +8,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$instapaper = new InstapaperOAuth(INSTAPAPER_CONSUMER_KEY, INSTAPAPER_CONSUMER_SECRET);
 		$token = $instapaper->get_access_token($username, $password);
 		if(isset($token['oauth_token']) && isset($token['oauth_token_secret'])){
-			// Cool, we’re logging in.
-			$db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASSWORD);
-			$query = $db->prepare('SELECT `id` FROM users WHERE `oauth_token` = ? LIMIT 1');
-			if ($query->execute(array($token['oauth_token']))) {
-				if ($results = $query->fetch(PDO::FETCH_ASSOC)) {
-					$user_id = $results['id'];
-				} else {
-					$instapaper_user_client = new InstapaperOAuth(INSTAPAPER_CONSUMER_KEY, INSTAPAPER_CONSUMER_SECRET, $user['oauth_token'], $user['oauth_token_secret']);
-					$fuckphp_instapaper_users = $instapaper_user_client->verify_credentials();
-					$instapaper_user = $fuckphp_instapaper_users[0];
-					$query = $db->prepare('INSERT INTO users (`name`, `instapaper_user`, `oauth_token`, `oauth_token_secret`) VALUES (?, ?, ?)');
-					if($query->execute(array($username, $instapaper_user['user_id'], $token['oauth_token'], $token['oauth_token_secret']))){
-						if($results = $db->query('SELECT LAST_INSERT_ID()')) {
-							$fuck_php = $results->fetch(PDO::FETCH_NUM);
-							$user_id = $fuck_php[0];
-						}
+			// Cool, we’re logging in. Let’s see if we already know about a user with this token.
+			if (is_null($user_id = $db->user_id_by_token($token['oauth_token']))) {
+				// Let’s find out this user’s Instapaper user ID and go from there.
+				$instapaper_user_client = new InstapaperOAuth(INSTAPAPER_CONSUMER_KEY, INSTAPAPER_CONSUMER_SECRET, $token['oauth_token'], $token['oauth_token_secret']);
+				$user_credentials_fuck = $instapaper_user_client->verify_credentials();
+				$user_credentials = $user_credentials_fuck[0];
+				if ( ! is_null($user_credentials->user_id)) {
+					// Got it. Do we know about this user, but its OAuth token has changed?
+					if (is_null($user_id = $db->user_id_by_instapaper_id($user_credentials->user_id))) {
+						// Nope, we’ve got a new user!
+						$user_id = $db->create_user($username, $user_credentials->user_id, $token['oauth_token'], $token['oauth_token_secret']);
+					} else {
+						// This may only every happen if Instapaper someday provides a way to
+						// revoke apps’ access, and a user decides to try Instaswap again after
+						// revoking it.
+						// TODO: log this
+						$db->update_user_token($user_id, $token['oauth_token'], $token['oauth_token_secret']);
 					}
 				}
 			}
 			if ($user_id != null) {
 				session_start();
 				$_SESSION['user'] = $user_id;
-				header("Location: /", true, 302);
+				header("Location: /", true, 303);
 				exit();
 			} else {
 				$login_failed = true;
@@ -43,11 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?><!DOCTYPE html>
-<title>Instaswap &endash; Log in</title>
+<title>Instaswap &ndash; Log in</title>
 <link rel="stylesheet" href="style.css">
 <h1>Instaswap</h1>
 <p>Send links to your friends’ Instapaper accounts.</p><? if ($login_failed): ?>
-<p class="error"><span>That username and password isn’t working. Try again?</span></p><? endif; ?>
+<p class="message error"><span>That username and password isn’t working. Try again?</span></p><? endif; ?>
 <p>Log in with Instapaper (I won’t save your password):</p>
 <form method="post">
 <dl id="login">

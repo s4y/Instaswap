@@ -22,9 +22,61 @@ input{
 #login>dd{
 	margin: 0;
 }
-.error>span{
-	color: #4B0000;
-	border: 1px solid #4B0000;
+button.link{
+	color: blue;
+	text-decoration: underline;
+	font: inherit;
+	border: none;
+	background: none;
+	display: inline;
+	padding: 0;
+	margin: 0;
+	cursor: pointer;
+}
+button.link:active{
+	color: red;
+}
+#nav{
+	float: right;
+	font-size: 0.9em;
+	margin: 0;
+}
+#nav>li{
+	display: inline-block;
+}
+#nav>li:not(:last-child)::after{
+	content: '|';
+	color: #888;
+	margin: 0 0.3em;
+}
+#sendLink{
+	text-align: center;
+	margin: 2em 0;
+	font-size: 1.5em;
+}
+#sendLink>input, #sendLink>button{
+	font-size: inherit;
+}
+#sendLink>.url{
+	width: 14em;
+}
+#sendLink>.recipient{
+	width: 6em;
+}
+a.whatLink{
+	color: inherit;
+	text-decoration: inherit;
+}
+.message>span{
+	border: 1px solid #4B4B4B;
 	padding: 0.5em;
 	display: inline-block;
+}
+.message.error>span{
+	color: #4B0000;
+	border-color: #4B0000;
+}
+.message.success>span{
+	color: #004B00;
+	border-color: #004B00;
 }
