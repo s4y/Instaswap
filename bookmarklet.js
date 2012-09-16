@@ -15,9 +15,8 @@
 			}
 			d[de][ac](b);
 		}
-		l = d[ce]('scr' + 'ipt');
+		l = d[ce]('script');
 		l.setAttribute('src', 'http://instaswap.sidnicio.us/api?key=api_key&target=' + e(q) + '&url=' + e(d.location.href));
 		b[ac](l);
 	}
 })();
-void(0);
