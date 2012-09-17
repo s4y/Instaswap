@@ -2,6 +2,7 @@
 require_once("InstapaperOAuth/InstapaperOAuth.php");
 require_once('config.php');
 require_once('db.php');
+require_once('instaswap.php');
 
 function destroy_session(){
 	if (isset($_COOKIE[session_name()])) {
@@ -14,14 +15,15 @@ function destroy_session(){
 	}
 }
 
+$db = new InstaswapDB();
+
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
 session_name('auth');
 if (isset($_COOKIE[session_name()])) {
 	session_start();
+	$user = $db->get_user_by_id($_SESSION['user']);
 }
-
-$db = new InstaswapDB();
 
 switch (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) {
 	case '/':
@@ -53,6 +55,9 @@ switch (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) {
 			header("HTTP/1.0 405 Method Not Allowed");
 			require('404.php');
 		}
+		break;
+	case '/api':
+		require('pages/api.php');
 		break;
 	default:
 		header("HTTP/1.0 404 Not Found");

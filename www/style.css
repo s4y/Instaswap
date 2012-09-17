@@ -63,6 +63,12 @@ button.link:active{
 #sendLink>.recipient{
 	width: 6em;
 }
+#footer {
+	border-top: 1px solid #ccc;
+	text-align: center;
+	margin-top: 2em;
+	padding-top: 1em;
+}
 a.whatLink{
 	color: inherit;
 	text-decoration: inherit;

@@ -16,7 +16,7 @@
 			d[de][ac](b);
 		}
 		l = d[ce]('script');
-		l.setAttribute('src', 'http://instaswap.sidnicio.us/api?key=api_key&target=' + e(q) + '&url=' + e(d.location.href));
+		l.setAttribute('src', 'http://instaswap.sidnicio.us/api?to=' + e(q) + '&url=' + e(d.location.href));
 		b[ac](l);
 	}
 })();

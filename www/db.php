@@ -40,8 +40,13 @@ class InstaswapDB {
 	}
 	function get_user_by_id($id){
 		$query = $this->get_connection()->prepare('SELECT * FROM users WHERE `id` = ? LIMIT 1');
-		$query->execute(array($_SESSION['user']));
+		$query->execute(array($id));
 		return $query->fetch(PDO::FETCH_ASSOC);
+	}
+	function get_user_by_name($name){
+		if (($user_id = $this->user_id_by_name($name))) {
+			return $this->get_user_by_id($user_id);
+		}
 	}
 }
 ?>
